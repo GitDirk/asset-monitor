@@ -1,0 +1,24 @@
+[project]
+name = "sl-tp-hebel-bot"
+version = "0.1.0"
+description = "SL/TP-Wächter für Knock-out-Produkte mit Telegram-Alarmen"
+requires-python = ">=3.9"
+dependencies = [
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.1",
+    "tzdata>=2024.1",
+]
+
+[project.scripts]
+hebelbot = "hebelbot.main:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

@@ -1,0 +1,40 @@
+#!/sbin/openrc-run
+# OpenRC service für sl-tp-hebel-bot (Alpine Linux).
+# Installiert nach /etc/init.d/sl-tp-hebel-bot.
+#
+# STRIKTE ISOLATION: Dieser Service verwaltet NUR sl-tp-hebel-bot. Andere Bots
+# auf der VM (alpaca-bot, day-trader-bot, tradingbot-news-future,
+# tradingbot-next-gen, 10K-challenge, tradingbot-aggressive, ...) bleiben unberührt.
+
+name="sl-tp-hebel-bot"
+description="SL/TP-Wächter für Hebelprodukte (onvista-Kurse, Telegram-Alarme)"
+
+: "${BOT_USER:=trading-bot}"
+: "${BOT_HOME:=/home/trading-bot/sl-tp-hebel-bot}"
+: "${BOT_LOG:=/var/log/sl-tp-hebel-bot}"
+
+export PYTHONPATH="${BOT_HOME}/src"
+
+command="${BOT_HOME}/.venv/bin/python"
+command_args="-m hebelbot.main"
+command_user="${BOT_USER}:${BOT_USER}"
+directory="${BOT_HOME}"
+pidfile="/run/sl-tp-hebel-bot.pid"
+
+# Bei Absturz automatisch neu starten
+supervisor="supervise-daemon"
+respawn_delay=15
+respawn_max=0
+# Telegram-Long-Polling kann bis zu 25 s blockieren -> Zeit zum sauberen Beenden geben
+retry="TERM/35/KILL/5"
+output_log="${BOT_LOG}/service.log"
+error_log="${BOT_LOG}/service.err"
+
+depend() {
+    need net
+    after firewall
+}
+
+start_pre() {
+    checkpath -d -m 0755 -o "${BOT_USER}:${BOT_USER}" "${BOT_LOG}"
+}
