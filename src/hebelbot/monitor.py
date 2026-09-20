@@ -261,6 +261,9 @@ class Monitor:
             f"(Abfrage alle {fmt_num(self.poll_interval(now), 0)} s)",
             f"Positionen: {len(positions)}",
         ]
+        pending = self.store.count_pending()
+        if pending:
+            lines.append(f"⚠️ {pending} Nachricht(en) im Postausgang (Zustellung gestört)")
         if self.failures:
             lines.append("Fehlerhafte Abfragen: " + ", ".join(f"{k} ({v}×)" for k, v in self.failures.items()))
             lines.append(f"Letzter Fehler: {esc(self.last_error or '')}")

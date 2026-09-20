@@ -5,7 +5,7 @@ import os
 import sqlite3
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 # Status einer Position
 ACTIVE = "aktiv"
@@ -34,6 +34,13 @@ CREATE TABLE IF NOT EXISTS positions (
 CREATE TABLE IF NOT EXISTS meta (
     key   TEXT PRIMARY KEY,
     value TEXT NOT NULL
+);
+-- Nicht zugestellte Telegram-Nachrichten, damit kein Alarm verloren geht
+CREATE TABLE IF NOT EXISTS outbox (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    text       TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    attempts   INTEGER NOT NULL DEFAULT 0
 );
 """
 
@@ -143,6 +150,35 @@ class Store:
         cur = self.conn.execute("DELETE FROM positions WHERE isin = ?", (isin,))
         self.conn.commit()
         return cur.rowcount > 0
+
+    # ---- Postausgang ----
+
+    def enqueue_message(self, text: str, created_at: Optional[datetime] = None) -> int:
+        cur = self.conn.execute(
+            "INSERT INTO outbox (text, created_at) VALUES (?, ?)",
+            (text, _ts(created_at or utcnow())),
+        )
+        self.conn.commit()
+        return cur.lastrowid
+
+    def pending_messages(self, limit: int = 20) -> List[Tuple[int, str, datetime, int]]:
+        rows = self.conn.execute(
+            "SELECT id, text, created_at, attempts FROM outbox ORDER BY id LIMIT ?", (limit,)
+        ).fetchall()
+        return [(r["id"], r["text"], _dt(r["created_at"]), r["attempts"]) for r in rows]
+
+    def count_pending(self) -> int:
+        return self.conn.execute("SELECT count(*) AS n FROM outbox").fetchone()["n"]
+
+    def mark_attempt(self, message_id: int) -> None:
+        self.conn.execute("UPDATE outbox SET attempts = attempts + 1 WHERE id = ?", (message_id,))
+        self.conn.commit()
+
+    def drop_message(self, message_id: int) -> None:
+        self.conn.execute("DELETE FROM outbox WHERE id = ?", (message_id,))
+        self.conn.commit()
+
+    # ---- Meta ----
 
     def get_meta(self, key: str) -> Optional[str]:
         row = self.conn.execute("SELECT value FROM meta WHERE key = ?", (key,)).fetchone()

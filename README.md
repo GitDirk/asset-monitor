@@ -16,6 +16,8 @@ Ein Telegram-Bot, der Stop-Loss und Take-Profit für Hebelprodukte wie Knock-out
 | 🔌 Kursabfrage gestört | 5 Abfragen in Folge fehlgeschlagen, SL/TP werden gerade **nicht** überwacht |
 | ☀️ Bot läuft | werktags um `HEARTBEAT_TIME`. Fehlt die Nachricht, ist der Bot aus |
 
+Fällt das Netz aus, während ein Alarm rausgehen soll, geht die Nachricht nicht verloren: Sie wandert in einen Postausgang in der Datenbank und wird bei jedem Prüflauf erneut versucht, bis sie zugestellt ist. Verspätete Nachrichten tragen einen Hinweis mit dem Alter. Nach 24 Stunden oder 60 vergeblichen Versuchen wird eine Nachricht verworfen. Wie viele Nachrichten warten, zeigt `/status`.
+
 Ausgelöst wird auf den **Geldkurs (Bid)**, also den Kurs, zu dem du verkaufen kannst.
 
 ## Telegram-Befehle
@@ -100,7 +102,8 @@ src/hebelbot/
   commands.py  Telegram-Befehle
   onvista.py   Kursabfrage und Parsing (einzige Stelle mit onvista-Wissen)
   telegram.py  Bot-API-Client (sendMessage, getUpdates, setMyCommands)
-  store.py     SQLite (state/positions.db)
+  notify.py    Zustellung mit Postausgang, damit kein Alarm verloren geht
+  store.py     SQLite (state/positions.db, inkl. Postausgang)
   levels.py    SL/TP-Parsing, deutsche Zahlenformate
   config.py    Einstellungen aus .env
 ```

@@ -11,6 +11,7 @@ Sprache im Repo: Code-Kommentare, Log-Meldungen, Telegram-Texte und Doku sind **
 ## Wichtige Regeln
 
 - Ein **fehlender Alarm ist der schlimmste Fehler.** Fehler bei der Kursabfrage dürfen nie still verschluckt werden: `QuoteError` führt über `Monitor` zum Alarm „Kursabfrage gestört“. Die Hauptschleife in `main.py` darf nie abbrechen.
+- Alarme laufen über `Notifier` (`notify.py`), nie direkt über `TelegramClient.send`. Nur so landen sie bei einer Netzstörung im Postausgang. Die Hauptschleife leert ihn vor jedem Prüflauf.
 - onvista-Wissen (URLs, JSON-Felder, User-Agent, 429-Handling) gehört ausschließlich in `src/hebelbot/onvista.py`.
 - Test-Fixtures in `tests/fixtures/` sind echte onvista-Antworten vom 17.09.2026. Wenn onvista das Format ändert, eine neue Antwort speichern und den Parser anpassen.
 - Der Code bleibt kompatibel mit Python 3.9 (lokal 3.9, VM 3.12).

@@ -120,3 +120,30 @@ def test_heartbeat_once_per_weekday(monitor, outbox, position):
     assert "Bot läuft" in outbox[0]
     saturday = datetime(2026, 9, 19, 7, 0, tzinfo=timezone.utc)
     assert not monitor.maybe_heartbeat(saturday)
+
+
+def test_alert_during_network_outage_is_delivered_later(store, client, settings):
+    """Knock-out-Alarm bei Netzausfall: die Nachricht darf nicht verloren gehen."""
+    from hebelbot.notify import Notifier
+    from test_notify import FakeTelegram
+
+    tg = FakeTelegram()
+    notifier = Notifier(tg, store)
+    monitor = Monitor(store, client, notifier, settings)
+    q = client.base
+    store.save(Position(
+        isin=q.isin, wkn=q.wkn, name="S&P 500 Long", entity_id=q.entity_id, url=q.url,
+        entry=8.0, sl=6.4, tp=10.4, status=ACTIVE, created_at=MARKET_NOW,
+    ))
+
+    tg.online = False
+    fresh(client, bid=0.001, barrier_hit=True)
+    monitor.run_cycle(MARKET_NOW)
+    assert tg.sent == []
+    assert store.count_pending() == 1
+    assert store.find(q.isin).status == KNOCKED_OUT
+
+    tg.online = True
+    notifier.flush()
+    assert len(tg.sent) == 1 and "KNOCK-OUT" in tg.sent[0]
+    assert store.count_pending() == 0
