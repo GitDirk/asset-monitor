@@ -67,6 +67,11 @@ def test_set_level_resets_triggered_alarm(handler, store):
     assert pos.sl == 5 and pos.status == ACTIVE
 
 
+def test_add_and_list_show_leverage(handler):
+    assert "Hebel: 8,01" in handler.handle("/add FC7CVG")
+    assert "Hebel 8,01" in handler.handle("/list")
+
+
 def test_list_and_remove(handler, store):
     assert "Keine Positionen" in handler.handle("/list")
     handler.handle("/add FC7CVG")

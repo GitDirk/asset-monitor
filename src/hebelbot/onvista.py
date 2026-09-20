@@ -52,6 +52,7 @@ class Quote:
     ko_barrier: Optional[float]
     ratio: Optional[float]
     ko_distance_pct: Optional[float]
+    leverage: Optional[float]
     barrier_hit: bool
 
 
@@ -207,5 +208,6 @@ def parse_snapshot(data: dict) -> Quote:
         ko_barrier=ko_barrier,
         ratio=_num(underlying.get("coverRatio")),
         ko_distance_pct=ko_distance,
+        leverage=_num(figure.get("gearing")) or _num(figure.get("gearingBid")),
         barrier_hit=barrier_hit,
     )

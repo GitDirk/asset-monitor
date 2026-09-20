@@ -18,6 +18,7 @@ def test_parse_snapshot_reads_quote_and_ko_data(snapshot):
     assert q.ko_barrier == pytest.approx(6685.06267)
     assert q.ratio == 0.01
     assert q.ko_distance_pct == pytest.approx(12.427, abs=0.01)
+    assert q.leverage == pytest.approx(8.01, abs=0.01)
     assert q.barrier_hit is False
     assert q.quote_time is not None and q.quote_time.tzinfo is not None
 

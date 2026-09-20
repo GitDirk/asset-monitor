@@ -39,6 +39,8 @@ def short_name(q: Quote) -> str:
 
 def quote_lines(q: Quote) -> List[str]:
     lines = [f"Geld/Brief: {fmt_eur(q.bid)} / {fmt_eur(q.ask)}"]
+    if q.leverage is not None:
+        lines.append(f"Hebel: {fmt_num(q.leverage)}")
     if q.underlying_name:
         lines.append(f"Basiswert {esc(q.underlying_name)}: {fmt_num(q.underlying_price)}")
     if q.ko_barrier is not None:
@@ -186,8 +188,10 @@ class CommandHandler:
         for p in positions:
             try:
                 q = self.client.quote(p.entity_id)
-                bid, ko = q.bid, q.ko_distance_pct
-                ko_text = f" · KO-Abstand {fmt_pct(ko, signed=False)}" if ko is not None else ""
+                bid = q.bid
+                ko_text = "" if q.ko_distance_pct is None else f" · KO-Abstand {fmt_pct(q.ko_distance_pct, signed=False)}"
+                if q.leverage is not None:
+                    ko_text = f" · Hebel {fmt_num(q.leverage)}{ko_text}"
             except QuoteError as exc:
                 log.warning("Kurs für /list nicht abrufbar (%s): %s", p.isin, exc)
                 bid, ko_text = p.last_bid, " · ⚠️ Kurs nicht abrufbar, letzter bekannter"
