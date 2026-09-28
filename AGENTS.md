@@ -33,4 +33,6 @@ PYTHONPATH=src .venv/bin/python -m hebelbot.main
 
 ## Deployment
 
-Das Deployment auf die Alpine-VM beschreibt der Skill `.claude/skills/deploy-vm/SKILL.md`. Dort laufen mehrere andere Bots: strikte Isolation beachten.
+Der Bot läuft als OpenRC-Service (`deploy/sl-tp-hebel-bot.openrc`); die README beschreibt die Installation.
+
+Die Anleitung für die konkrete VM des Betreibers liegt als Claude-Skill unter `.claude/skills/deploy-vm/SKILL.md`. Dieser Ordner ist **absichtlich nicht versioniert** (`.gitignore`), weil er Hostnamen, Benutzer und Pfade enthält. Nie ins Repo aufnehmen und keine dieser Angaben in versionierte Dateien kopieren.

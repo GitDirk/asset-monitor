@@ -1,3 +1,6 @@
+# Lokale Deployment-Anleitung mit Zugangsdaten der eigenen VM
+.claude/
+
 # Secrets
 .env
 *.env
