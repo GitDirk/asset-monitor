@@ -3,8 +3,8 @@ from datetime import datetime, timedelta, timezone
 import pytest
 
 from conftest import MARKET_NOW
-from hebelbot.monitor import FAILURE_ALERT_THRESHOLD, Monitor
-from hebelbot.store import ACTIVE, HIT_SL, HIT_TP, KNOCKED_OUT, Position
+from assetmonitor.monitor import FAILURE_ALERT_THRESHOLD, Monitor
+from assetmonitor.store import ACTIVE, HIT_SL, HIT_TP, KNOCKED_OUT, Position
 
 
 @pytest.fixture
@@ -124,7 +124,7 @@ def test_heartbeat_once_per_weekday(monitor, outbox, position):
 
 def test_alert_during_network_outage_is_delivered_later(store, client, settings):
     """Knock-out-Alarm bei Netzausfall: die Nachricht darf nicht verloren gehen."""
-    from hebelbot.notify import Notifier
+    from assetmonitor.notify import Notifier
     from test_notify import FakeTelegram
 
     tg = FakeTelegram()

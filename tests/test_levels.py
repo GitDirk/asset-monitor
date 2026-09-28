@@ -1,6 +1,6 @@
 import pytest
 
-from hebelbot.levels import LevelError, fmt_eur, parse_level, parse_number, validate_levels
+from assetmonitor.levels import LevelError, fmt_eur, parse_level, parse_number, validate_levels
 
 
 @pytest.mark.parametrize("text,expected", [("8,31", 8.31), ("8.31", 8.31), ("1.234,50", 1234.5), ("10 €", 10.0)])

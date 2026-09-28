@@ -1,25 +1,25 @@
 #!/sbin/openrc-run
-# OpenRC service für sl-tp-hebel-bot (Alpine Linux).
-# Installiert nach /etc/init.d/sl-tp-hebel-bot.
+# OpenRC service für asset-monitor (Alpine Linux).
+# Installiert nach /etc/init.d/asset-monitor.
 #
-# STRIKTE ISOLATION: Dieser Service verwaltet NUR sl-tp-hebel-bot. Andere Bots
+# STRIKTE ISOLATION: Dieser Service verwaltet NUR asset-monitor. Andere Bots
 # auf der VM (alpaca-bot, day-trader-bot, tradingbot-news-future,
 # tradingbot-next-gen, 10K-challenge, tradingbot-aggressive, ...) bleiben unberührt.
 
-name="sl-tp-hebel-bot"
+name="asset-monitor"
 description="SL/TP-Wächter für Hebelprodukte (onvista-Kurse, Telegram-Alarme)"
 
 : "${BOT_USER:=trading-bot}"
-: "${BOT_HOME:=/home/trading-bot/sl-tp-hebel-bot}"
-: "${BOT_LOG:=/var/log/sl-tp-hebel-bot}"
+: "${BOT_HOME:=/home/trading-bot/asset-monitor}"
+: "${BOT_LOG:=/var/log/asset-monitor}"
 
 export PYTHONPATH="${BOT_HOME}/src"
 
 command="${BOT_HOME}/.venv/bin/python"
-command_args="-m hebelbot.main"
+command_args="-m assetmonitor.main"
 command_user="${BOT_USER}:${BOT_USER}"
 directory="${BOT_HOME}"
-pidfile="/run/sl-tp-hebel-bot.pid"
+pidfile="/run/asset-monitor.pid"
 
 # Bei Absturz automatisch neu starten
 supervisor="supervise-daemon"

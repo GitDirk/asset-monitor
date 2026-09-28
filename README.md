@@ -1,4 +1,4 @@
-# sl-tp-hebel-bot
+# asset-monitor
 
 Ein Telegram-Bot, der Stop-Loss und Take-Profit für Hebelprodukte wie Knock-outs, Turbos und Mini-Futures überwacht. Trade Republic bietet dafür keine SL/TP-Orders an. Der Bot fragt die Kurse regelmäßig bei onvista ab und schickt eine Telegram-Nachricht, sobald ein Level erreicht ist. **Verkaufen musst du selbst** in der Trade-Republic-App. Zwischen Alarm und Verkauf vergeht also immer etwas Zeit.
 
@@ -71,31 +71,31 @@ Nur der Chat aus `TELEGRAM_CHAT_ID` darf Befehle geben. Nachrichten aus anderen 
    ```
 
    ```bash
-   PYTHONPATH=src .venv/bin/python -m hebelbot.main --selftest DE000FC7CVG4
+   PYTHONPATH=src .venv/bin/python -m assetmonitor.main --selftest DE000FC7CVG4
    ```
 
    Der Selbsttest ruft einen Kurs bei onvista ab und schickt eine Testnachricht.
 5. **Starten:**
 
    ```bash
-   PYTHONPATH=src .venv/bin/python -m hebelbot.main
+   PYTHONPATH=src .venv/bin/python -m assetmonitor.main
    ```
 
 ## Dauerbetrieb auf einem Server
 
 Der Bot ist eine Dauerschleife und sollte auf einem Rechner laufen, der immer an ist, zum Beispiel einem kleinen Server, einer VM oder einem Raspberry Pi. Auf einem Laptop läuft er nur, solange dieser wach ist.
 
-Für Alpine Linux liegt eine OpenRC-Service-Datei bei ([deploy/sl-tp-hebel-bot.openrc](deploy/sl-tp-hebel-bot.openrc)). Sie erwartet das Projekt unter `/home/trading-bot/sl-tp-hebel-bot` mit einer venv im Unterordner `.venv`, beides über die Variablen `BOT_USER`, `BOT_HOME` und `BOT_LOG` anpassbar. Installation:
+Für Alpine Linux liegt eine OpenRC-Service-Datei bei ([deploy/asset-monitor.openrc](deploy/asset-monitor.openrc)). Sie erwartet das Projekt unter `/home/trading-bot/asset-monitor` mit einer venv im Unterordner `.venv`, beides über die Variablen `BOT_USER`, `BOT_HOME` und `BOT_LOG` anpassbar. Installation:
 
 ```bash
-doas install -m 0755 deploy/sl-tp-hebel-bot.openrc /etc/init.d/sl-tp-hebel-bot
+doas install -m 0755 deploy/asset-monitor.openrc /etc/init.d/asset-monitor
 ```
 
 ```bash
-doas rc-update add sl-tp-hebel-bot default && doas rc-service sl-tp-hebel-bot start
+doas rc-update add asset-monitor default && doas rc-service asset-monitor start
 ```
 
-Für systemd oder Docker gibt es keine fertige Datei, der Startbefehl ist aber derselbe: `python -m hebelbot.main` mit `src/` im `PYTHONPATH`.
+Für systemd oder Docker gibt es keine fertige Datei, der Startbefehl ist aber derselbe: `python -m assetmonitor.main` mit `src/` im `PYTHONPATH`.
 
 **Wichtig:** Es darf immer nur *eine* Instanz mit demselben Bot-Token laufen. Zwei Instanzen nehmen sich gegenseitig die Telegram-Befehle weg.
 
@@ -114,7 +114,7 @@ Für die Einhaltung der onvista-Nutzungsbedingungen ist jeder selbst verantwortl
 ## Aufbau
 
 ```
-src/hebelbot/
+src/assetmonitor/
   main.py      Einstiegspunkt, Hauptschleife (Prüflauf + Telegram-Long-Polling)
   monitor.py   SL/TP/KO-Prüfung, Erinnerungen, Veraltet-Warnung, Heartbeat
   commands.py  Telegram-Befehle

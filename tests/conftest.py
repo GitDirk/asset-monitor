@@ -7,9 +7,9 @@ from pathlib import Path
 
 import pytest
 
-from hebelbot.config import Settings
-from hebelbot.onvista import Instrument, QuoteError, parse_snapshot
-from hebelbot.store import Store
+from assetmonitor.config import Settings
+from assetmonitor.onvista import Instrument, QuoteError, parse_snapshot
+from assetmonitor.store import Store
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

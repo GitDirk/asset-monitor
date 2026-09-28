@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from hebelbot.telegram import RETRY_DELAYS, TelegramClient, _split
+from assetmonitor.telegram import RETRY_DELAYS, TelegramClient, _split
 
 
 def _client(responses):
@@ -10,20 +10,20 @@ def _client(responses):
 
 
 def test_send_retries_on_server_error(monkeypatch):
-    monkeypatch.setattr("hebelbot.telegram.time.sleep", lambda s: None)
+    monkeypatch.setattr("assetmonitor.telegram.time.sleep", lambda s: None)
     client = _client([{"ok": False, "error_code": 502, "description": "Bad Gateway"}, {"ok": True}])
     assert client.send("hallo") is True
     assert client.session.post.call_count == 2
 
 
 def test_send_gives_up_after_retries(monkeypatch):
-    monkeypatch.setattr("hebelbot.telegram.time.sleep", lambda s: None)
+    monkeypatch.setattr("assetmonitor.telegram.time.sleep", lambda s: None)
     client = _client([{"ok": False, "error_code": 502, "description": "x"}] * (len(RETRY_DELAYS) + 1))
     assert client.send("hallo") is False
 
 
 def test_rejected_message_is_not_retried(monkeypatch):
-    monkeypatch.setattr("hebelbot.telegram.time.sleep", lambda s: None)
+    monkeypatch.setattr("assetmonitor.telegram.time.sleep", lambda s: None)
     client = _client([{"ok": False, "error_code": 400, "description": "can not parse entities"}])
     # True = nicht erneut versuchen, sonst bliebe die Nachricht ewig im Postausgang
     assert client.send("<b>kaputt") is True

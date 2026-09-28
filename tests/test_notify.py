@@ -1,8 +1,8 @@
 from datetime import timedelta
 from unittest.mock import MagicMock
 
-from hebelbot.notify import MAX_ATTEMPTS, Notifier
-from hebelbot.store import utcnow
+from assetmonitor.notify import MAX_ATTEMPTS, Notifier
+from assetmonitor.store import utcnow
 
 
 class FakeTelegram:

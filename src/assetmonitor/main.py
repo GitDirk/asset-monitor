@@ -1,4 +1,4 @@
-"""Einstiegspunkt: `python -m hebelbot.main [--selftest [ISIN]]`."""
+"""Einstiegspunkt: `python -m assetmonitor.main [--selftest [ISIN]]`."""
 from __future__ import annotations
 
 import argparse
@@ -17,7 +17,7 @@ from .onvista import OnvistaClient, QuoteError
 from .store import Store, utcnow
 from .telegram import TelegramClient, TelegramError
 
-log = logging.getLogger("hebelbot")
+log = logging.getLogger("assetmonitor")
 
 OFFSET_KEY = "telegram_offset"
 MAX_LONG_POLL = 25
@@ -120,7 +120,7 @@ def selftest(settings: Settings, isin: str) -> int:
         ok = False
 
     tg = TelegramClient(settings.telegram_token, settings.telegram_chat_id)
-    if tg.send("🧪 Selbsttest von sl-tp-hebel-bot: Telegram-Versand funktioniert."):
+    if tg.send("🧪 Selbsttest von asset-monitor: Telegram-Versand funktioniert."):
         print("Telegram OK: Testnachricht gesendet")
     else:
         print("Telegram FEHLER: Nachricht konnte nicht gesendet werden (Token/Chat-ID prüfen)")

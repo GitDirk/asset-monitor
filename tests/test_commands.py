@@ -1,7 +1,7 @@
 import pytest
 
-from hebelbot.commands import CommandHandler
-from hebelbot.store import ACTIVE, HIT_SL
+from assetmonitor.commands import CommandHandler
+from assetmonitor.store import ACTIVE, HIT_SL
 
 
 @pytest.fixture

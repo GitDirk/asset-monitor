@@ -1,6 +1,6 @@
 from unittest.mock import MagicMock
 
-from hebelbot.main import Bot
+from assetmonitor.main import Bot
 
 
 def make_bot(settings, client, store):

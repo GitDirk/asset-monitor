@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from conftest import load_fixture
-from hebelbot.onvista import OnvistaClient, QuoteError, parse_snapshot
+from assetmonitor.onvista import OnvistaClient, QuoteError, parse_snapshot
 
 
 def test_parse_snapshot_reads_quote_and_ko_data(snapshot):
